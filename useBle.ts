@@ -12,11 +12,17 @@ import * as ExpoDevice from "expo-device";
 interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
   scanForPeripherals(): Promise<boolean>;
-  allDevices: any[];
+  sendMessage(deviceAdress: string, message: string): Promise<void>;
+  connectToDevice(device: BluetoothDevice): Promise<void>;
+  disconnect(deviceAdress: string): Promise<boolean>;
+  allDevices: BluetoothDevice[];
+  connectedDevice: BluetoothDevice | null;
 }
 
 function useBLE(): BluetoothLowEnergyApi {
   const [allDevices, setAllDevices] = useState<BluetoothDevice[]>([]);
+  const [connectedDevice, setConnectedDevice] =
+    useState<BluetoothDevice | null>(null);
 
   useEffect(() => {
     console.log(allDevices);
@@ -108,10 +114,63 @@ function useBLE(): BluetoothLowEnergyApi {
     return false;
   };
 
+  const connectToDevice = async (device: BluetoothDevice) => {
+    try {
+      console.log("Start conecting...");
+      const deviceConnection = await RNBluetoothClassic.connectToDevice(
+        device.address
+      );
+      if (deviceConnection) {
+        setConnectedDevice(deviceConnection);
+        console.log(
+          "Usted se ha conectado al dispositivo: ",
+          deviceConnection.name
+        );
+      }
+    } catch (e) {
+      console.log("FAILED TO CONNECT", e);
+    }
+  };
+
+  const sendMessage = async (deviceAdress: string, message: string) => {
+    try {
+      const isConected = await RNBluetoothClassic.isDeviceConnected(
+        deviceAdress
+      );
+      if (isConected) {
+        console.log("Enviando mensaje...");
+        const itWasSent = await RNBluetoothClassic.writeToDevice(
+          deviceAdress,
+          message,
+          "utf-8"
+        );
+        console.log(itWasSent);
+      }
+    } catch (e) {
+      console.log("FAILED TO SEND DATA", e);
+    }
+  };
+
+  const disconnect = async (deviceAdress: string): Promise<boolean> => {
+    try {
+      const itWasDisconnected = await RNBluetoothClassic.disconnectFromDevice(
+        deviceAdress
+      );
+      return itWasDisconnected;
+    } catch (e) {
+      console.log("Error al desconectar", e);
+      return false;
+    }
+  };
+
   return {
     requestPermissions,
+    connectToDevice,
+    sendMessage,
+    disconnect,
     scanForPeripherals,
     allDevices,
+    connectedDevice,
   };
 }
 

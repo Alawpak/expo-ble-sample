@@ -10,10 +10,19 @@ import RNBluetoothClassic, {
   BluetoothEventType,
 } from "react-native-bluetooth-classic";
 import useBLE from "./useBle";
+import DeviceModal from "./DeviceConnectionModal";
 
 export default function App() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
+  const {
+    requestPermissions,
+    scanForPeripherals,
+    connectToDevice,
+    sendMessage,
+    disconnect,
+    allDevices,
+    connectedDevice,
+  } = useBLE();
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
@@ -49,6 +58,41 @@ export default function App() {
       </View>
       <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
         <Text style={styles.ctaButtonText}>{"Connect"}</Text>
+      </TouchableOpacity>
+      <DeviceModal
+        closeModal={hideModal}
+        visible={isModalVisible}
+        connectToPeripheral={connectToDevice}
+        devices={allDevices}
+      />
+      <TouchableOpacity
+        onPress={() => {
+          if (connectedDevice) {
+            sendMessage(
+              connectedDevice.address,
+              "11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,11111,11111" +
+                "\n"
+            );
+          } else {
+            console.log("No estás conectado");
+          }
+        }}
+        style={styles.ctaButton}
+      >
+        <Text style={styles.ctaButtonText}>{"Send data"}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={async () => {
+          if (connectedDevice) {
+            if (await disconnect(connectedDevice.address))
+              console.log("Deconectado satisfactoriamente");
+          } else {
+            console.log("No estás conectado");
+          }
+        }}
+        style={styles.ctaButton}
+      >
+        <Text style={styles.ctaButtonText}>{"Disconnect"}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
