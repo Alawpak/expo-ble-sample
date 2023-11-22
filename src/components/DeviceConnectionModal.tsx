@@ -67,7 +67,9 @@ const DeviceModal: FC<DeviceModalProps> = (props) => {
       visible={visible}
     >
       <SafeAreaView style={modalStyle.modalTitle}>
-        <Text style={modalStyle.modalTitleText}>Elige el modulo deseado</Text>
+        <Text style={modalStyle.modalTitleText}>
+          Elige uno de los siguientes modulos:
+        </Text>
         <FlatList
           contentContainerStyle={modalStyle.modalFlatlistContiner}
           data={devices}

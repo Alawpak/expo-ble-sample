@@ -9,7 +9,7 @@ import RNBluetoothClassic, {
 
 import * as ExpoDevice from "expo-device";
 
-interface BluetoothLowEnergyApi {
+export interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
   scanForPeripherals(): Promise<boolean>;
   sendMessage(deviceAdress: string, message: string): Promise<void>;

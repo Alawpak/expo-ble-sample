@@ -5,19 +5,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import DeviceModal from "../components/DeviceConnectionModal";
 import useBLE from "../hooks/useBle";
+import { useBluetooth } from "../context/BluetoothContext";
 
 const ConnectDevice = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const bluetooth = useBluetooth();
 
   const {
     requestPermissions,
     scanForPeripherals,
     connectToDevice,
-    sendMessage,
     disconnect,
     allDevices,
     connectedDevice,
-  } = useBLE();
+  } = bluetooth;
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
@@ -54,22 +55,6 @@ const ConnectDevice = () => {
         connectToPeripheral={connectToDevice}
         devices={allDevices}
       />
-      <TouchableOpacity
-        onPress={() => {
-          if (connectedDevice) {
-            sendMessage(
-              connectedDevice.address,
-              "11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,00000,00000,11111,00000,00000,00000,00000,00000,11111,11111" +
-                "\n"
-            );
-          } else {
-            console.log("No estás conectado");
-          }
-        }}
-        style={styles.ctaButton}
-      >
-        <Text style={styles.ctaButtonText}>{"Send data"}</Text>
-      </TouchableOpacity>
       <TouchableOpacity
         onPress={async () => {
           if (connectedDevice) {

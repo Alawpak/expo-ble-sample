@@ -7,12 +7,13 @@ import Main from "./src/modules/Main";
 import ConnectDevice from "./src/modules/ConnectDevice";
 import { StatusBar } from "expo-status-bar";
 import { Text, TouchableOpacity } from "react-native";
+import { BluetoothProvider } from "./src/context/BluetoothContext";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
+    <BluetoothProvider>
       <StatusBar style="dark" />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Main">
@@ -37,6 +38,6 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </>
+    </BluetoothProvider>
   );
 }

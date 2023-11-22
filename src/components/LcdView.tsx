@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { ReactNativeZoomableView } from "@openspacelabs/react-native-zoomable-view";
 
@@ -9,9 +9,13 @@ import { theme } from "../theme/theme";
 import LcdByte from "./LcdByte";
 import LcdBits from "./LcdBits";
 import LcdBit from "./LcdBit";
+import useBLE from "../hooks/useBle";
+import { useBluetooth } from "../context/BluetoothContext";
 
 const LcdView = () => {
   const [bytes, setBytes] = useState<string[][][]>([...INIT_BYTE_ARRAY]);
+  const [bytesMessage, setBytesMessage] = useState<string>("");
+  const { sendMessage, connectedDevice } = useBluetooth();
 
   const handleBit = (
     byteIndex: number,
@@ -38,7 +42,8 @@ const LcdView = () => {
       let grupo = exportBytesAsString.slice(i, i + 5);
       newArray.push(grupo.join(""));
     }
-    console.log(newArray.join());
+
+    setBytesMessage(newArray.join());
   }, [bytes]);
 
   return (
@@ -68,6 +73,20 @@ const LcdView = () => {
           ))}
         </ReactNativeZoomableView>
       </View>
+      <TouchableOpacity
+        style={styles.sendBtn}
+        onPress={() => {
+          if (connectedDevice) {
+            sendMessage(connectedDevice.address, bytesMessage + "\n");
+          } else {
+            console.log("No estás conectado");
+          }
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>
+          {"Send data"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -93,6 +112,17 @@ const styles = StyleSheet.create({
     width: "100%",
     flexWrap: "wrap",
     backgroundColor: theme.colors.blue,
+  },
+  sendBtn: {
+    backgroundColor: theme.colors.mediumBlue,
+    padding: 5,
+    marginTop: 5,
+    width: "80%",
+    height: 40,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
   },
 });
 
