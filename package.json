@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@openspacelabs/react-native-zoomable-view": "^2.1.5",
     "eas-cli": "^5.9.0",
     "expo": "~49.0.15",
     "expo-dev-client": "~2.4.12",

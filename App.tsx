@@ -9,8 +9,8 @@ import {
 import RNBluetoothClassic, {
   BluetoothEventType,
 } from "react-native-bluetooth-classic";
-import useBLE from "./useBle";
-import DeviceModal from "./DeviceConnectionModal";
+import useBLE from "./src/hooks/useBle";
+import DeviceModal from "./src/components/DeviceConnectionModal";
 
 export default function App() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -44,16 +44,10 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heartRateTitleWrapper}>
-        {/* {connectedDevice ? (
-          <>
-            <PulseIndicator />
-            <Text style={styles.heartRateTitleText}>Your Heart Rate Is:</Text>
-            <Text style={styles.heartRateText}>{heartRate} bpm</Text>
-          </>
-        ) : (
-        )} */}
         <Text style={styles.heartRateTitleText}>
-          Please Connect to a Heart Rate Monitor
+          {connectedDevice
+            ? `Now you're connected to ${connectedDevice.name}`
+            : "Por favor, escanea el modulo HC-05"}
         </Text>
       </View>
       <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
